@@ -1,0 +1,182 @@
+# chronos-timer
+
+**Chronos** — 以希腊时间之神 Chronos 命名，一个优雅的 Python 时间工具包。
+
+支持时间显示、倒计时、秒表计时，API 简洁直观，开箱即用。
+
+## 安装
+
+```bash
+pip install chronos-timer
+```
+
+## 快速开始
+
+### 1. 显示时间
+
+```python
+from chronos import show_time
+
+# 默认格式
+print(show_time())
+# 输出: 2026-03-22 19:43:00
+
+# 自定义格式
+print(show_time(fmt="%H:%M:%S"))
+# 输出: 19:43:00
+
+# 友好格式（中文）
+print(show_time(friendly=True))
+# 输出: 2026年3月22日 星期日 19:43:00
+
+# 获取 Unix 时间戳
+print(show_time(unix=True))
+# 输出: 1771774980
+
+# 指定时区（UTC+8 北京时间）
+print(show_time(timezone_offset=8))
+```
+
+### 2. 倒计时
+
+```python
+from chronos import countdown
+
+# 10 秒倒计时
+countdown(10)
+
+# 带提示消息
+countdown(60, message="专注工作时间")
+
+# 静默模式（不打印，只等待）
+countdown(5, silent=True)
+
+# 使用回调函数追踪进度
+def on_tick(remaining, total):
+    pct = 100 * (total - remaining) / total
+    print(f"进度: {pct:.0f}%")
+
+countdown(5, callback=on_tick)
+
+# 精确倒计时（支持小数秒）
+from chronos.countdown import countdown_precise
+countdown_precise(2.5)
+```
+
+### 3. 秒表计时
+
+```python
+from chronos import Stopwatch
+import time
+
+# 基本用法
+sw = Stopwatch()
+sw.start()
+time.sleep(1.5)
+sw.stop()
+print(sw.elapsed_seconds())  # 约 1.5
+
+# 暂停/继续
+sw = Stopwatch()
+sw.start()
+time.sleep(1)
+sw.pause()
+time.sleep(2)  # 暂停时间不计入
+sw.resume()
+time.sleep(1)
+sw.stop()
+print(sw.elapsed_seconds())  # 约 2.0
+
+# 分段计时 (Lap)
+sw = Stopwatch()
+sw.start()
+time.sleep(0.5)
+sw.lap()   # Lap 1
+time.sleep(1.0)
+sw.lap()   # Lap 2
+time.sleep(0.3)
+sw.stop()
+print(sw.summary())
+# 输出:
+# 秒表:
+# 总时间: 0.25s (0.2500s)
+# 状态: 已停止
+#
+# 分段记录 (2 段):
+#   序号  分段           累计
+#   --------------------------------------
+#   Lap 1  0.50s          0.50s
+#   Lap 2  1s             1.50s          [最慢]
+#
+#   平均分段: 0.75s (0.7500s)
+
+# 上下文管理器（with 语句）
+with Stopwatch() as sw:
+    time.sleep(2)
+print(sw.elapsed_seconds())  # 约 2.0
+```
+
+### 4. 代码计时器
+
+```python
+from chronos import Timer
+import time
+
+# 方式一：上下文管理器
+with Timer() as t:
+    time.sleep(1)
+print(f"耗时: {t.elapsed_seconds():.2f}s")
+
+# 方式二：手动控制
+t = Timer()
+t.start()
+time.sleep(1)
+t.stop()
+print(f"耗时: {t.elapsed_seconds():.2f}s")
+```
+
+## API 文档
+
+### `show_time(fmt=None, timezone_offset=None, unix=False, friendly=False)`
+显示当前时间。
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `fmt` | str | 自定义 strftime 格式 |
+| `timezone_offset` | int | 时区偏移（小时） |
+| `unix` | bool | 返回 Unix 时间戳 |
+| `friendly` | bool | 中文友好格式 |
+
+### `countdown(seconds, interval=1.0, callback=None, silent=False, message=None)`
+执行倒计时。
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `seconds` | int | 倒计时秒数 |
+| `interval` | float | 刷新间隔 |
+| `callback` | Callable | 进度回调 (remaining, total) |
+| `silent` | bool | 静默模式 |
+| `message` | str | 开始提示 |
+
+### `Stopwatch(name=None, auto_start=False)`
+秒表类，支持 lap 分段计时。
+
+| 方法 | 说明 |
+|------|------|
+| `start()` | 启动 |
+| `stop()` | 停止 |
+| `pause()` | 暂停 |
+| `resume()` | 恢复 |
+| `reset()` | 重置 |
+| `lap()` | 记录分段 |
+| `elapsed_seconds()` | 获取总时间 |
+| `summary()` | 打印统计摘要 |
+| `fastest_lap()` | 最快分段 |
+| `slowest_lap()` | 最慢分段 |
+
+### `Timer`
+简单代码计时器，支持 `with` 语句。
+
+## 许可证
+
+MIT License
