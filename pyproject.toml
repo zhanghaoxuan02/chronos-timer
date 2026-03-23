@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chronos-timer"
+version = "1.0.1"
+description = "Chronos - 优雅的 Python 时间工具包，支持时间显示、倒计时和秒表计时"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+authors = [
+    {name = "zhanghaoxuan02"}
+]
+keywords = ["timer", "stopwatch", "countdown", "chronos", "计时器", "秒表", "倒计时"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/zhanghaoxuan02/chronos-timer"
+
+[tool.setuptools.packages.find]
+where = ["."]
